@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?><!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - This layout is the main layout which display current weather info, next 24 forecasts         -
+  - and forecast of the coming few days!                                                         -
+  - This Layout file contains three parts inside vertical LinearLayout wrapped by a ScrollView   -                                     -
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:scrollbars="none"
+    tools:background="@drawable/shape_main_evening_background"
+    tools:context=".activities.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="220dp">
+
+            <!-- ViewPager that allow the navigate between fragments by swipe left and right -->
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp" />
+
+            <!-- TabLayout to show indicator of the current selected page in the ViewPager -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/indicator"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:layout_gravity="center|bottom"
+                android:layout_marginBottom="16dp"
+                app:tabBackground="@drawable/selector_pager_indicator"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp" />
+
+        </FrameLayout>
+
+        <!-- RecyclerView with horizontal orientation to show next 24 hours forecasts -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_hours_forecast"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_space"
+            android:background="@drawable/shape_transparent_rounded_background"
+            android:padding="@dimen/small_space"
+            tools:itemCount="8"
+            tools:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/item_hour_forecast"
+            tools:orientation="horizontal"
+            tools:scrollbars="horizontal" />
+
+        <!-- RecyclerView with vertical orientation to show coming few days forecasts -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_days_forecast"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/small_space"
+            android:layout_marginRight="@dimen/small_space"
+            android:layout_marginBottom="@dimen/small_space"
+            android:layout_weight="1"
+            android:background="@drawable/shape_transparent_rounded_background"
+            android:padding="@dimen/small_space"
+            tools:listitem="@layout/item_day_forecast" />
+
+    </LinearLayout>
+
+</ScrollView>
