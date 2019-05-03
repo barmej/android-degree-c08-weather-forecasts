@@ -1,4 +1,4 @@
-package com.barmej.weatherforecasts.adapters;
+package com.barmej.weatherforecasts.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,35 +11,31 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.barmej.weatherforecasts.R;
-import com.barmej.weatherforecasts.entity.Forecast;
+import com.barmej.weatherforecasts.data.entity.Forecast;
 import com.barmej.weatherforecasts.utils.CustomDateUtils;
 import com.barmej.weatherforecasts.utils.WeatherUtils;
 
 import java.util.List;
 
 /**
- * {@link HoursForecastAdapter} exposes a list contains the next 24hrs weather forecasts
- * from a {@link List<Forecast>} to a {@link RecyclerView}.
+ * {@link DaysForecastAdapter} exposes a list contain the next 4 days weather forecasts
+ * from a List of {@link List<Forecast>} to a {@link RecyclerView}.
  */
-public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdapter.ForecastAdapterViewHolder> {
+public class DaysForecastAdapter extends RecyclerView.Adapter<DaysForecastAdapter.ForecastAdapterViewHolder> {
 
     /**
      * The context to access app resources and inflate layouts
      */
     private final Context mContext;
 
-    /**
-     * List of next 24hrs forecasts
-     */
-    private List<Forecast> mForecasts;
-
+    private List<List<Forecast>> mForecasts;
 
     /**
-     * HoursForecastAdapter constructor
+     * DaysForecastAdapter constructor
      *
      * @param context Used to access the the UI and app resources
      */
-    public HoursForecastAdapter(@NonNull Context context) {
+    public DaysForecastAdapter(@NonNull Context context) {
         mContext = context;
     }
 
@@ -56,7 +52,7 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
     @Override
     public @NonNull
     ForecastAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_hour_forecast, viewGroup, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_day_forecast, viewGroup, false);
         return new ForecastAdapterViewHolder(view);
     }
 
@@ -73,7 +69,7 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
     @Override
     public void onBindViewHolder(@NonNull ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
 
-        Forecast forecast = mForecasts.get(position);
+        Forecast forecast = mForecasts.get(position).get(0);
 
         /* Weather Icon ************************************************************************* */
 
@@ -83,13 +79,22 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
         // Display weather condition icon
         forecastAdapterViewHolder.iconImageView.setImageResource(weatherImageId);
 
-        /* Weather Clock Time ******************************************************************* */
+        /* Weather Date ************************************************************************* */
 
-        // Get human readable string using getHourOfDay utility method and display it
-        String hourClockString = CustomDateUtils.getHourOfDay(forecast.getDt());
+        // Get human readable string using getFriendlyDateString utility method and display it
+        String dateString = CustomDateUtils.getFriendlyDateString(mContext, forecast.getDt(), false);
 
-        // Display clock hour
-        forecastAdapterViewHolder.timeTextView.setText(hourClockString);
+        /* Display friendly date string */
+        forecastAdapterViewHolder.dateTextView.setText(dateString);
+
+        /* Weather Description ****************************************************************** */
+
+        // Get weather condition description
+        String description = forecast.getWeather().get(0).getDescription();
+
+        // Display weather description
+        forecastAdapterViewHolder.descriptionTextView.setText(description);
+
 
         /* High (max) temperature *************************************************************** */
 
@@ -100,7 +105,19 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
         String highTemperatureString = mContext.getString(R.string.format_temperature, highTemperature);
 
         // Display high temperature
-        forecastAdapterViewHolder.temperatureTextView.setText(highTemperatureString);
+        forecastAdapterViewHolder.highTempTextView.setText(highTemperatureString);
+
+
+        /* Low (min) temperature **************************************************************** */
+
+        // Read low temperature from forecast object
+        double lowTemperature = forecast.getMain().getTempMin();
+
+        // Get formatted low temperature string
+        String lowTemperatureString = mContext.getString(R.string.format_temperature, lowTemperature);
+
+        // Display low temperature
+        forecastAdapterViewHolder.lowTempTextView.setText(lowTemperatureString);
 
     }
 
@@ -121,9 +138,9 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
     /**
      * Update the current forecasts data with new list
      *
-     * @param forecasts a list of {@link Forecast}
+     * @param forecasts a list of {@link List<Forecast>}
      */
-    public void updateData(List<Forecast> forecasts) {
+    public void updateData(List<List<Forecast>> forecasts) {
         this.mForecasts = forecasts;
         notifyDataSetChanged();
     }
@@ -135,14 +152,18 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
     class ForecastAdapterViewHolder extends RecyclerView.ViewHolder {
 
         final ImageView iconImageView;
-        final TextView timeTextView;
-        final TextView temperatureTextView;
+        final TextView dateTextView;
+        final TextView descriptionTextView;
+        final TextView highTempTextView;
+        final TextView lowTempTextView;
 
         ForecastAdapterViewHolder(View view) {
             super(view);
             iconImageView = view.findViewById(R.id.weather_icon);
-            timeTextView = view.findViewById(R.id.time);
-            temperatureTextView = view.findViewById(R.id.temperature);
+            dateTextView = view.findViewById(R.id.date);
+            descriptionTextView = view.findViewById(R.id.weather_description);
+            highTempTextView = view.findViewById(R.id.high_temperature);
+            lowTempTextView = view.findViewById(R.id.low_temperature);
         }
 
     }

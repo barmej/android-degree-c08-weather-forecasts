@@ -1,4 +1,4 @@
-package com.barmej.weatherforecasts.network;
+package com.barmej.weatherforecasts.data.network;
 
 import android.content.Context;
 
@@ -76,6 +76,20 @@ public final class NetworkUtils {
      */
     private OpenWeatherApiInterface mApiInterface;
 
+    /**
+     * Method used to get an instance of NetworkUtils class
+     *
+     * @param context Context to use for some initializations
+     * @return an instance of NetworkUtils class
+     */
+    public static synchronized NetworkUtils getInstance(Context context) {
+        if (sInstance == null) {
+            synchronized (LOCK) {
+                if (sInstance == null) sInstance = new NetworkUtils(context);
+            }
+        }
+        return sInstance;
+    }
 
     /**
      * @param context Context to use for some initializations
@@ -102,21 +116,6 @@ public final class NetworkUtils {
         // Get an instance of OpenWeatherApiInterface implementation
         mApiInterface = retrofit.create(OpenWeatherApiInterface.class);
 
-    }
-
-    /**
-     * Method used to get an instance of NetworkUtils class
-     *
-     * @param context Context to use for some initializations
-     * @return an instance of NetworkUtils class
-     */
-    public static synchronized NetworkUtils getInstance(Context context) {
-        if (sInstance == null) {
-            synchronized (LOCK) {
-                if (sInstance == null) sInstance = new NetworkUtils(context);
-            }
-        }
-        return sInstance;
     }
 
     /**

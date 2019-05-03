@@ -1,4 +1,4 @@
-package com.barmej.weatherforecasts.activities;
+package com.barmej.weatherforecasts.ui.activities;
 
 import android.os.Bundle;
 

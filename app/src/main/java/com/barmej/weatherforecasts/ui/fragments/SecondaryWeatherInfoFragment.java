@@ -1,4 +1,4 @@
-package com.barmej.weatherforecasts.fragments;
+package com.barmej.weatherforecasts.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.barmej.weatherforecasts.R;
-import com.barmej.weatherforecasts.entity.WeatherInfo;
+import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 import com.barmej.weatherforecasts.utils.WeatherUtils;
 
 /**

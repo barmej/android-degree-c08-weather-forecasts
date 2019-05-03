@@ -1,15 +1,13 @@
-package com.barmej.weatherforecasts.activities;
+package com.barmej.weatherforecasts.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,25 +20,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.barmej.weatherforecasts.R;
-import com.barmej.weatherforecasts.adapters.DaysForecastAdapter;
-import com.barmej.weatherforecasts.adapters.HoursForecastAdapter;
-import com.barmej.weatherforecasts.entity.ForecastLists;
-import com.barmej.weatherforecasts.entity.WeatherForecasts;
-import com.barmej.weatherforecasts.entity.WeatherInfo;
-import com.barmej.weatherforecasts.fragments.PrimaryWeatherInfoFragment;
-import com.barmej.weatherforecasts.fragments.SecondaryWeatherInfoFragment;
-import com.barmej.weatherforecasts.network.NetworkUtils;
+import com.barmej.weatherforecasts.data.OnDataDeliveryListener;
+import com.barmej.weatherforecasts.data.WeatherDataRepository;
+import com.barmej.weatherforecasts.data.entity.ForecastLists;
+import com.barmej.weatherforecasts.data.entity.WeatherInfo;
+import com.barmej.weatherforecasts.ui.adapters.DaysForecastAdapter;
+import com.barmej.weatherforecasts.ui.adapters.HoursForecastAdapter;
+import com.barmej.weatherforecasts.ui.fragments.PrimaryWeatherInfoFragment;
+import com.barmej.weatherforecasts.ui.fragments.SecondaryWeatherInfoFragment;
 import com.barmej.weatherforecasts.utils.CustomDateUtils;
-import com.barmej.weatherforecasts.utils.OpenWeatherDataParser;
 import com.barmej.weatherforecasts.utils.SharedPreferencesHelper;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * MainActivity that show current weather info, next hours & days forecasts
@@ -77,15 +70,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mDaysForecastRecyclerView;
 
     /**
-     * An instance of NetworkUtils for all network related operations
+     * An instance of WeatherDataRepository for all data related operations
      */
-    private NetworkUtils mNetworkUtils;
-
-    /**
-     * Retrofit call objects
-     */
-    private Call<WeatherInfo> mWeatherCall;
-    private Call<WeatherForecasts> mForecastsCall;
+    private WeatherDataRepository mRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,9 +108,10 @@ public class MainActivity extends AppCompatActivity {
         mDaysForecastRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mDaysForecastRecyclerView.setAdapter(mDaysForecastsAdapter);
 
-        // Get instance of NetworkUtils
-        mNetworkUtils = NetworkUtils.getInstance(this);
+        // Get instance of WeatherDataRepository
+        mRepository = WeatherDataRepository.getInstance(getApplication());
 
+        // Hide empty views until data become available to display
         mHeaderLayout.setVisibility(View.INVISIBLE);
         mHoursForecastsRecyclerView.setVisibility(View.INVISIBLE);
         mDaysForecastRecyclerView.setVisibility(View.INVISIBLE);
@@ -143,8 +131,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         // Cancel ongoing requests
-        mWeatherCall.cancel();
-        mForecastsCall.cancel();
+        mRepository.cancelDataRequests();
     }
 
     /**
@@ -196,71 +183,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Request current weather data
      */
     private void requestWeatherInfo() {
-
-        // Create a new WeatherInfo call using Retrofit API interface
-        mWeatherCall = mNetworkUtils.getApiInterface().getWeatherInfo(mNetworkUtils.getQueryMap());
-
-        // Add request to the queue to be executed asynchronously
-        mWeatherCall.enqueue(new Callback<WeatherInfo>() {
+        mRepository.getWeatherInfo(new OnDataDeliveryListener<WeatherInfo>() {
             @Override
-            public void onResponse(@NonNull Call<WeatherInfo> call, @NonNull Response<WeatherInfo> response) {
-                if (response.code() == 200) {
-                    // Get WeatherInfo object from response body
-                    WeatherInfo weatherInfo = response.body();
-                    if (weatherInfo != null) {
-                        mHeaderFragmentAdapter.updateData(weatherInfo);
-                        mHeaderLayout.setVisibility(View.VISIBLE);
-                        updateSunriseAndSunsetTimes(weatherInfo);
-                        changeWindowBackground();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<WeatherInfo> call, @NonNull Throwable t) {
-                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onDataDelivery(WeatherInfo weatherInfo) {
+                mHeaderFragmentAdapter.updateData(weatherInfo);
+                mHeaderLayout.setVisibility(View.VISIBLE);
+                updateSunriseAndSunsetTimes(weatherInfo);
+                changeWindowBackground();
             }
         });
-
     }
 
     /**
      * Request forecasts data
      */
     private void requestForecastsInfo() {
-
-        // Create a new WeatherForecasts call using Retrofit API interface
-        mForecastsCall = mNetworkUtils.getApiInterface().getForecasts(mNetworkUtils.getQueryMap());
-
-        // Add request to the queue to be executed asynchronously
-        mForecastsCall.enqueue(new Callback<WeatherForecasts>() {
+        mRepository.getForecastsInfo(new OnDataDeliveryListener<ForecastLists>() {
             @Override
-            public void onResponse(@NonNull Call<WeatherForecasts> call, @NonNull Response<WeatherForecasts> response) {
-                if (response.code() == 200) {
-                    WeatherForecasts weatherForecasts = response.body();
-                    if (weatherForecasts != null) {
-                        ForecastLists forecastLists = OpenWeatherDataParser.getForecastsDataFromWeatherForecasts(weatherForecasts);
-                        mHoursForecastAdapter.updateData(forecastLists.getHoursForecasts());
-                        mDaysForecastsAdapter.updateData(forecastLists.getDaysForecasts());
-                        mHoursForecastsRecyclerView.setVisibility(View.VISIBLE);
-                        mDaysForecastRecyclerView.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<WeatherForecasts> call, @NonNull Throwable t) {
-                Log.e(TAG, t.getMessage());
-                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onDataDelivery(ForecastLists forecastLists) {
+                mHoursForecastAdapter.updateData(forecastLists.getHoursForecasts());
+                mDaysForecastsAdapter.updateData(forecastLists.getDaysForecasts());
+                mHoursForecastsRecyclerView.setVisibility(View.VISIBLE);
+                mDaysForecastRecyclerView.setVisibility(View.VISIBLE);
             }
         });
-
     }
+
 
     /**
      * Update sunrise hour and sunset hour saved in the SharedPreferences

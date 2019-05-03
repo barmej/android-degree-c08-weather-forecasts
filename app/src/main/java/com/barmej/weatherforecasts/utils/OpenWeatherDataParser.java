@@ -2,14 +2,14 @@ package com.barmej.weatherforecasts.utils;
 
 import android.util.Log;
 
-import com.barmej.weatherforecasts.entity.Forecast;
-import com.barmej.weatherforecasts.entity.ForecastLists;
-import com.barmej.weatherforecasts.entity.Main;
-import com.barmej.weatherforecasts.entity.Sys;
-import com.barmej.weatherforecasts.entity.Weather;
-import com.barmej.weatherforecasts.entity.WeatherForecasts;
-import com.barmej.weatherforecasts.entity.WeatherInfo;
-import com.barmej.weatherforecasts.entity.Wind;
+import com.barmej.weatherforecasts.data.entity.Forecast;
+import com.barmej.weatherforecasts.data.entity.ForecastLists;
+import com.barmej.weatherforecasts.data.entity.Main;
+import com.barmej.weatherforecasts.data.entity.Sys;
+import com.barmej.weatherforecasts.data.entity.Weather;
+import com.barmej.weatherforecasts.data.entity.WeatherForecasts;
+import com.barmej.weatherforecasts.data.entity.WeatherInfo;
+import com.barmej.weatherforecasts.data.entity.Wind;
 
 import org.json.JSONException;
 import org.json.JSONObject;

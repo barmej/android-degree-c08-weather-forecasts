@@ -1,4 +1,4 @@
-package com.barmej.weatherforecasts.entity;
+package com.barmej.weatherforecasts.data.entity;
 
 public class Sys {
 

@@ -1,4 +1,4 @@
-package com.barmej.weatherforecasts.fragments;
+package com.barmej.weatherforecasts.ui.fragments;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
