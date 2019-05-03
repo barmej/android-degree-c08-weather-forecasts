@@ -124,10 +124,9 @@ public final class NetworkUtils {
      * This location is based on the query capabilities of the weather provider that we are using.
      *
      * @param context  context object to use for reading string resources
-     * @param endPoint the end point to get data from
      * @return The URL to use to query the weather server.
      */
-    private static HashMap getQueryMap(Context context, String endPoint) {
+    public static HashMap getQueryMap(Context context) {
         HashMap map = new HashMap();
         map.put(QUERY_PARAM, SharedPreferencesHelper.getPreferredWeatherLocation(context));
         map.put(UNITS_PARAM, SharedPreferencesHelper.getPreferredMeasurementSystem(context));
