@@ -1,9 +1,13 @@
 package com.barmej.weatherforecasts.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Main {
 
     private double temp;
+    @SerializedName("temp_min")
     private double tempMin;
+    @SerializedName("temp_max")
     private double tempMax;
     private double pressure;
     private long humidity;

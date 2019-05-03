@@ -8,6 +8,8 @@ import com.barmej.weatherforecasts.utils.SharedPreferencesHelper;
 import java.util.HashMap;
 import java.util.Locale;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -23,16 +25,6 @@ public final class NetworkUtils {
      * OpenWeatherMap's API Url
      */
     private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
-
-    /**
-     * Current Weather endpoint
-     */
-    private static final String WEATHER_ENDPOINT = "weather";
-
-    /**
-     * Coming forecasts endpoints
-     */
-    private static final String FORECAST_ENDPOINT = "forecast";
 
     /**
      * The query parameter allows us to determine the location
@@ -93,10 +85,18 @@ public final class NetworkUtils {
         // Activity or BroadcastReceiver if you pass it instead of application context
         mContext = context.getApplicationContext();
 
+        // Create a new object from HttpLoggingInterceptor
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        // Add Interceptor to HttpClient
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
         // Init retrofit object
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create()) // Use GsonConverterFactory to use for object serialization
+                .client(client) // Set HttpClient to be used by Retrofit
                 .build();
 
         // Get an instance of OpenWeatherApiInterface implementation
@@ -123,16 +123,15 @@ public final class NetworkUtils {
      * Builds the query parameters map to get the weather data using a location.
      * This location is based on the query capabilities of the weather provider that we are using.
      *
-     * @param context  context object to use for reading string resources
      * @return The URL to use to query the weather server.
      */
-    public static HashMap getQueryMap(Context context) {
-        HashMap map = new HashMap();
-        map.put(QUERY_PARAM, SharedPreferencesHelper.getPreferredWeatherLocation(context));
-        map.put(UNITS_PARAM, SharedPreferencesHelper.getPreferredMeasurementSystem(context));
+    public HashMap getQueryMap() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(QUERY_PARAM, SharedPreferencesHelper.getPreferredWeatherLocation(mContext));
+        map.put(UNITS_PARAM, SharedPreferencesHelper.getPreferredMeasurementSystem(mContext));
         map.put(LANG_PARAM, Locale.getDefault().getLanguage());
         map.put(FORMAT_PARAM, FORMAT);
-        map.put(APP_ID_PARAM, context.getString(R.string.api_key));
+        map.put(APP_ID_PARAM, mContext.getString(R.string.api_key));
         return map;
     }
 
