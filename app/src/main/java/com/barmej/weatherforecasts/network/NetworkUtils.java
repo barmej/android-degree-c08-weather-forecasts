@@ -1,18 +1,15 @@
 package com.barmej.weatherforecasts.network;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.barmej.weatherforecasts.R;
 import com.barmej.weatherforecasts.utils.SharedPreferencesHelper;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -83,9 +80,9 @@ public final class NetworkUtils {
     private Context mContext;
 
     /**
-     * Instance of Volley Request Queue
+     * Instance of Volley OpenWeatherApiInterface
      */
-    private RequestQueue mRequestQueue;
+    private OpenWeatherApiInterface mApiInterface;
 
 
     /**
@@ -95,7 +92,16 @@ public final class NetworkUtils {
         // getApplicationContext() is key, it keeps your application safe from leaking the
         // Activity or BroadcastReceiver if you pass it instead of application context
         mContext = context.getApplicationContext();
-        mRequestQueue = getRequestQueue();
+
+        // Init retrofit object
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        // Get an instance of OpenWeatherApiInterface implementation
+        mApiInterface = retrofit.create(OpenWeatherApiInterface.class);
+
     }
 
     /**
@@ -114,73 +120,31 @@ public final class NetworkUtils {
     }
 
     /**
-     * @return the url for the weather endpoint
-     */
-    public static URL getWeatherUrl(Context context) {
-        return buildUrl(context, WEATHER_ENDPOINT);
-    }
-
-    /**
-     * @return The url for the forecasts endpoint
-     */
-    public static URL getForecastUrl(Context context) {
-        return buildUrl(context, FORECAST_ENDPOINT);
-    }
-
-    /**
-     * Builds the URL to get the weather data using a location. This location is based
-     * on the query capabilities of the weather provider that we are using.
+     * Builds the query parameters map to get the weather data using a location.
+     * This location is based on the query capabilities of the weather provider that we are using.
      *
      * @param context  context object to use for reading string resources
      * @param endPoint the end point to get data from
      * @return The URL to use to query the weather server.
      */
-    private static URL buildUrl(Context context, String endPoint) {
-        Uri.Builder uriBuilder = Uri.parse(BASE_URL + endPoint).buildUpon();
-        Uri uri = uriBuilder
-                .appendQueryParameter(QUERY_PARAM, SharedPreferencesHelper.getPreferredWeatherLocation(context))
-                .appendQueryParameter(UNITS_PARAM, SharedPreferencesHelper.getPreferredMeasurementSystem(context))
-                .appendQueryParameter(LANG_PARAM, Locale.getDefault().getLanguage())
-                .appendQueryParameter(FORMAT_PARAM, FORMAT)
-                .appendQueryParameter(APP_ID_PARAM, context.getString(R.string.api_key))
-                .build();
-        try {
-            URL url = new URL(uri.toString());
-            Log.v(TAG, "URL: " + url);
-            return url;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private static HashMap getQueryMap(Context context, String endPoint) {
+        HashMap map = new HashMap();
+        map.put(QUERY_PARAM, SharedPreferencesHelper.getPreferredWeatherLocation(context));
+        map.put(UNITS_PARAM, SharedPreferencesHelper.getPreferredMeasurementSystem(context));
+        map.put(LANG_PARAM, Locale.getDefault().getLanguage());
+        map.put(FORMAT_PARAM, FORMAT);
+        map.put(APP_ID_PARAM, context.getString(R.string.api_key));
+        return map;
     }
 
     /**
-     * Get an instance of Volley RequestQueue
+     * Get an instance of OpenWeatherApiInterface
      *
-     * @return an instance of Volley RequestQueue
+     * @return an instance of OpenWeatherApiInterface
      */
-    private RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(mContext);
-        }
-        return mRequestQueue;
+    public OpenWeatherApiInterface getApiInterface() {
+        return mApiInterface;
     }
 
-    /**
-     * @param request volley request to add to RequestQueue
-     * @param <T>     The passed-in request
-     */
-    public <T> void addToRequestQueue(Request<T> request) {
-        getRequestQueue().add(request);
-    }
-
-    /**
-     * Cancel all requests of the given tag
-     *
-     * @param tag the tag of the requests we want to cancel
-     */
-    public void cancelRequests(String tag) {
-        getRequestQueue().cancelAll(tag);
-    }
 
 }
