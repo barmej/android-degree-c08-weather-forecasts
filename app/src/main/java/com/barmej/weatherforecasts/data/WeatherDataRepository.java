@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.barmej.weatherforecasts.data.entity.ForecastLists;
 import com.barmej.weatherforecasts.data.entity.WeatherForecasts;
@@ -51,9 +53,12 @@ public class WeatherDataRepository {
     /**
      * Get current weather data
      *
-     * @param onDataDeliveryListener Implementation of {@Link OnDataDeliveryListener} to pass result back to the caller Class
+     * @return LiveData object to be notified when data change
      */
-    public void getWeatherInfo(final OnDataDeliveryListener onDataDeliveryListener) {
+    public LiveData<WeatherInfo> getWeatherInfo() {
+
+        // Create MutableLiveData to observe data changes
+        final MutableLiveData<WeatherInfo> weatherInfoLiveData = new MutableLiveData<>();
 
         // Create a new WeatherInfo call using Retrofit API interface
         mWeatherCall = mNetworkUtils.getApiInterface().getWeatherInfo(mNetworkUtils.getQueryMap());
@@ -66,7 +71,7 @@ public class WeatherDataRepository {
                     // Get WeatherInfo object from response body
                     WeatherInfo weatherInfo = response.body();
                     if (weatherInfo != null) {
-                        onDataDeliveryListener.onDataDelivery(weatherInfo);
+                        weatherInfoLiveData.setValue(weatherInfo);
                     }
                 }
             }
@@ -77,14 +82,18 @@ public class WeatherDataRepository {
             }
         });
 
+        return weatherInfoLiveData;
     }
 
     /**
      * Get forecasts data
      *
-     * @param onDataDeliveryListener Implementation of {@Link OnDataDeliveryListener} to pass result back to the caller Class
+     * @return LiveData object to be notified when data change
      */
-    public void getForecastsInfo(final OnDataDeliveryListener onDataDeliveryListener) {
+    public LiveData<ForecastLists> getForecastsInfo() {
+
+        // Create MutableLiveData to observe data changes
+        final MutableLiveData<ForecastLists> forecastsLiveData = new MutableLiveData<>();
 
         // Create a new WeatherForecasts call using Retrofit API interface
         mForecastsCall = mNetworkUtils.getApiInterface().getForecasts(mNetworkUtils.getQueryMap());
@@ -97,7 +106,7 @@ public class WeatherDataRepository {
                     WeatherForecasts weatherForecasts = response.body();
                     if (weatherForecasts != null) {
                         ForecastLists forecastLists = OpenWeatherDataParser.getForecastsDataFromWeatherForecasts(weatherForecasts);
-                        onDataDeliveryListener.onDataDelivery(forecastLists);
+                        forecastsLiveData.setValue(forecastLists);
                     }
                 }
             }
@@ -108,6 +117,7 @@ public class WeatherDataRepository {
             }
         });
 
+        return forecastsLiveData;
     }
 
     /**

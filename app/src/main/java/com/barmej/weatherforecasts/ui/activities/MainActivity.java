@@ -15,12 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.barmej.weatherforecasts.R;
-import com.barmej.weatherforecasts.data.OnDataDeliveryListener;
 import com.barmej.weatherforecasts.data.WeatherDataRepository;
 import com.barmej.weatherforecasts.data.entity.ForecastLists;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
@@ -73,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
      * An instance of WeatherDataRepository for all data related operations
      */
     private WeatherDataRepository mRepository;
+
+    private LiveData<WeatherInfo> mWeatherInfoLiveData;
+    private LiveData<ForecastLists> mForecastListsLiveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,9 +191,10 @@ public class MainActivity extends AppCompatActivity {
      * Request current weather data
      */
     private void requestWeatherInfo() {
-        mRepository.getWeatherInfo(new OnDataDeliveryListener<WeatherInfo>() {
+        mWeatherInfoLiveData = mRepository.getWeatherInfo();
+        mWeatherInfoLiveData.observe(this, new Observer<WeatherInfo>() {
             @Override
-            public void onDataDelivery(WeatherInfo weatherInfo) {
+            public void onChanged(WeatherInfo weatherInfo) {
                 mHeaderFragmentAdapter.updateData(weatherInfo);
                 mHeaderLayout.setVisibility(View.VISIBLE);
                 updateSunriseAndSunsetTimes(weatherInfo);
@@ -202,9 +207,10 @@ public class MainActivity extends AppCompatActivity {
      * Request forecasts data
      */
     private void requestForecastsInfo() {
-        mRepository.getForecastsInfo(new OnDataDeliveryListener<ForecastLists>() {
+        mForecastListsLiveData = mRepository.getForecastsInfo();
+        mForecastListsLiveData.observe(this, new Observer<ForecastLists>() {
             @Override
-            public void onDataDelivery(ForecastLists forecastLists) {
+            public void onChanged(ForecastLists forecastLists) {
                 mHoursForecastAdapter.updateData(forecastLists.getHoursForecasts());
                 mDaysForecastsAdapter.updateData(forecastLists.getDaysForecasts());
                 mHoursForecastsRecyclerView.setVisibility(View.VISIBLE);
