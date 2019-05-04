@@ -10,8 +10,10 @@ import com.barmej.weatherforecasts.data.WeatherDataRepository;
 import com.barmej.weatherforecasts.data.entity.ForecastLists;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 
+/**
+ * ViewModel class that hold data requests and temporary that survive configuration changes
+ */
 public class MainViewModel extends AndroidViewModel {
-
 
     /**
      * An instance of WeatherDataRepository for all data related operations

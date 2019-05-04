@@ -22,14 +22,35 @@ import retrofit2.Response;
 public class WeatherDataRepository {
 
     private static final String TAG = WeatherDataRepository.class.getSimpleName();
+
+    /**
+     * Object used for the purpose of synchronize lock
+     */
     private static final Object LOCK = new Object();
 
+    /**
+     * Instance of this class for Singleton
+     */
     private static WeatherDataRepository sInstance;
 
+    /**
+     * Instance of NetworkUtils to perform network operations
+     */
     private NetworkUtils mNetworkUtils;
+
+    /**
+     * Instance of AppDatabase to perform database operation
+     */
     private AppDatabase mAppDatabase;
+
+    /**
+     * Instance of AppExecutor to perform tasks on worker threads
+     */
     private AppExecutor mAppExecutor;
 
+    /**
+     * Retrofit Call objects
+     */
     private Call<WeatherInfo> mWeatherCall;
     private Call<WeatherForecasts> mForecastsCall;
 

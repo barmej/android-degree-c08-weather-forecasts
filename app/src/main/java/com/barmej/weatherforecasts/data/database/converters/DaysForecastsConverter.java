@@ -1,6 +1,5 @@
 package com.barmej.weatherforecasts.data.database.converters;
 
-
 import androidx.room.TypeConverter;
 
 import com.barmej.weatherforecasts.data.entity.Forecast;

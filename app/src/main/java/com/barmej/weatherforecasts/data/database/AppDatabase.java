@@ -19,10 +19,27 @@ import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 @TypeConverters({WeatherListConverter.class, HoursForecastsConverter.class, DaysForecastsConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
+    /**
+     * Instance of this class for Singleton
+     */
     private static final Object LOCK = new Object();
+
+    /**
+     * Database file name
+     */
     private static final String DATABASE_NAME = "weather_db";
+
+    /**
+     * Instance of this class for Singleton
+     */
     private static AppDatabase sInstance;
 
+    /**
+     * Method used to get an instance of AppDatabase class
+     *
+     * @param context Context to use for Room initializations
+     * @return an instance of AppDatabase class
+     */
     public static AppDatabase getInstance(Context context) {
         if (sInstance == null) {
             synchronized (LOCK) {
@@ -36,7 +53,16 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;
     }
 
+    /**
+     * Return object of WeatherInfoDao to read, write, delete and update weather info
+     * @return an instance of weatherInfoDao
+     */
     public abstract WeatherInfoDao weatherInfoDao();
 
+    /**
+     * Return object of ForecastDao to read, write, delete and update forecasts info
+     * @return an instance of weatherInfoDao
+     */
     public abstract ForecastDao forecastDao();
+
 }

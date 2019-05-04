@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.barmej.weatherforecasts.R;
 
+/**
+ * Settings activity that host Settings fragment
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -13,4 +16,5 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
     }
+
 }

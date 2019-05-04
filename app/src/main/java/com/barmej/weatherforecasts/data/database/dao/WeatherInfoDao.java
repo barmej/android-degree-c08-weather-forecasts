@@ -1,6 +1,5 @@
 package com.barmej.weatherforecasts.data.database.dao;
 
-
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -10,7 +9,6 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
-
 
 @Dao
 public interface WeatherInfoDao {
