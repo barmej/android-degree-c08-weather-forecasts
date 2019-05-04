@@ -10,11 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.barmej.weatherforecasts.R;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 import com.barmej.weatherforecasts.utils.CustomDateUtils;
 import com.barmej.weatherforecasts.utils.WeatherUtils;
+import com.barmej.weatherforecasts.viewmodel.MainViewModel;
 
 /**
  * A fragment that show primary weather information like high and low temperatures, weather icon,
@@ -66,19 +70,21 @@ public class PrimaryWeatherInfoFragment extends Fragment {
         mTemperatureTextView = mainView.findViewById(R.id.temperature);
         mHighLowTempTextView = mainView.findViewById(R.id.high_low_temperature);
 
-        // Show current weather info
-        showWeatherInfo();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            // Get a handle on the MainViewModel of the host Activity
+            MainViewModel mainViewModel = ViewModelProviders.of(activity).get(MainViewModel.class);
+            // Observe data change to populate UI with the new data
+            mainViewModel.getWeatherInfoLiveData().observe(this, new Observer<WeatherInfo>() {
+                @Override
+                public void onChanged(@Nullable WeatherInfo weatherInfo) {
+                    // Update weather info object and reflect the updated data on UI
+                    mWeatherInfo = weatherInfo;
+                    showWeatherInfo();
+                }
+            });
+        }
 
-    }
-
-    /**
-     * Update weather info object and reflect the updated data on UI
-     *
-     * @param weatherInfo WeatherInfo object that contain the new data
-     */
-    public void updateWeatherInfo(WeatherInfo weatherInfo) {
-        mWeatherInfo = weatherInfo;
-        showWeatherInfo();
     }
 
     /**

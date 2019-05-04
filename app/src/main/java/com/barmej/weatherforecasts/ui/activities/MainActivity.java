@@ -15,14 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.barmej.weatherforecasts.R;
-import com.barmej.weatherforecasts.data.WeatherDataRepository;
 import com.barmej.weatherforecasts.data.entity.ForecastLists;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 import com.barmej.weatherforecasts.ui.adapters.DaysForecastAdapter;
@@ -31,6 +30,7 @@ import com.barmej.weatherforecasts.ui.fragments.PrimaryWeatherInfoFragment;
 import com.barmej.weatherforecasts.ui.fragments.SecondaryWeatherInfoFragment;
 import com.barmej.weatherforecasts.utils.CustomDateUtils;
 import com.barmej.weatherforecasts.utils.SharedPreferencesHelper;
+import com.barmej.weatherforecasts.viewmodel.MainViewModel;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -70,14 +70,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mHoursForecastsRecyclerView;
     private RecyclerView mDaysForecastRecyclerView;
 
-    /**
-     * An instance of WeatherDataRepository for all data related operations
-     */
-    private WeatherDataRepository mRepository;
-
-    private LiveData<WeatherInfo> mWeatherInfoLiveData;
-    private LiveData<ForecastLists> mForecastListsLiveData;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,9 +104,6 @@ public class MainActivity extends AppCompatActivity {
         mDaysForecastRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mDaysForecastRecyclerView.setAdapter(mDaysForecastsAdapter);
 
-        // Get instance of WeatherDataRepository
-        mRepository = WeatherDataRepository.getInstance(getApplication());
-
         // Hide empty views until data become available to display
         mHeaderLayout.setVisibility(View.INVISIBLE);
         mHoursForecastsRecyclerView.setVisibility(View.INVISIBLE);
@@ -134,8 +123,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        // Cancel ongoing requests
-        mRepository.cancelDataRequests();
     }
 
     /**
@@ -191,11 +178,10 @@ public class MainActivity extends AppCompatActivity {
      * Request current weather data
      */
     private void requestWeatherInfo() {
-        mWeatherInfoLiveData = mRepository.getWeatherInfo();
-        mWeatherInfoLiveData.observe(this, new Observer<WeatherInfo>() {
+        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel.getWeatherInfoLiveData().observe(this, new Observer<WeatherInfo>() {
             @Override
             public void onChanged(WeatherInfo weatherInfo) {
-                mHeaderFragmentAdapter.updateData(weatherInfo);
                 mHeaderLayout.setVisibility(View.VISIBLE);
                 updateSunriseAndSunsetTimes(weatherInfo);
                 changeWindowBackground();
@@ -207,8 +193,8 @@ public class MainActivity extends AppCompatActivity {
      * Request forecasts data
      */
     private void requestForecastsInfo() {
-        mForecastListsLiveData = mRepository.getForecastsInfo();
-        mForecastListsLiveData.observe(this, new Observer<ForecastLists>() {
+        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel.getForecastListsLiveData().observe(this, new Observer<ForecastLists>() {
             @Override
             public void onChanged(ForecastLists forecastLists) {
                 mHoursForecastAdapter.updateData(forecastLists.getHoursForecasts());
@@ -285,16 +271,6 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
             fragments.add(position, fragment);
             return fragment;
-        }
-
-        /*
-         * Update data presented in the fragments of the ViewPager
-         *
-         * @param weatherInfo WeatherInfo object that contain the new data
-         */
-        void updateData(WeatherInfo weatherInfo) {
-            ((PrimaryWeatherInfoFragment) fragments.get(0)).updateWeatherInfo(weatherInfo);
-            ((SecondaryWeatherInfoFragment) fragments.get(1)).updateWeatherInfo(weatherInfo);
         }
 
     }

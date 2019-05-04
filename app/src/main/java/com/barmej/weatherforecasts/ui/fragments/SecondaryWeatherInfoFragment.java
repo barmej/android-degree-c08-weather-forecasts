@@ -9,10 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.barmej.weatherforecasts.R;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 import com.barmej.weatherforecasts.utils.WeatherUtils;
+import com.barmej.weatherforecasts.viewmodel.MainViewModel;
 
 /**
  * A fragment that show extra weather information like humidity, pressure, wind speed and direction
@@ -57,19 +61,21 @@ public class SecondaryWeatherInfoFragment extends Fragment {
         pressureTextView = mainView.findViewById(R.id.pressure);
         windTextView = mainView.findViewById(R.id.wind_measurement);
 
-        // Show current weather info
-        showWeatherInfo();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            // Get a handle on the MainViewModel of the host Activity
+            MainViewModel mainViewModel = ViewModelProviders.of(activity).get(MainViewModel.class);
+            // Observe data change to populate UI with the new data
+            mainViewModel.getWeatherInfoLiveData().observe(this, new Observer<WeatherInfo>() {
+                @Override
+                public void onChanged(@Nullable WeatherInfo weatherInfo) {
+                    // Update weather info object and reflect the updated data on UI
+                    mWeatherInfo = weatherInfo;
+                    showWeatherInfo();
+                }
+            });
+        }
 
-    }
-
-    /**
-     * Update weather info object and reflect the updated data on UI
-     *
-     * @param weatherInfo WeatherInfo object that contain the new data
-     */
-    public void updateWeatherInfo(WeatherInfo weatherInfo) {
-        mWeatherInfo = weatherInfo;
-        showWeatherInfo();
     }
 
     /**
@@ -98,11 +104,15 @@ public class SecondaryWeatherInfoFragment extends Fragment {
         double windSpeed = mWeatherInfo.getWind().getSpeed();
         double windDirection = mWeatherInfo.getWind().getDeg();
 
-        // Get formatted wind speed & direction text
-        String windString = WeatherUtils.getFormattedWind(getContext(), windSpeed, windDirection);
+        if (getContext() != null) {
 
-        // Display wind speed & direction text
-        windTextView.setText(windString);
+            // Get formatted wind speed & direction text
+            String windString = WeatherUtils.getFormattedWind(getContext(), windSpeed, windDirection);
+
+            // Display wind speed & direction text
+            windTextView.setText(windString);
+
+        }
 
         /* Pressure ***************************************************************************** */
 
