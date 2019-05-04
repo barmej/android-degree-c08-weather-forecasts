@@ -1,6 +1,5 @@
 package com.barmej.weatherforecasts.ui.fragments;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +10,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.barmej.weatherforecasts.R;
+import com.barmej.weatherforecasts.data.WeatherDataRepository;
 
 
 /**
@@ -61,10 +61,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             setPreferenceSummary(preference);
         }
 
-        // Set result to notify the MainActivity of the change
-        if (getActivity() != null) {
-            getActivity().setResult(Activity.RESULT_OK);
-        }
+        // Request data to be updated using the new user preferences
+        WeatherDataRepository repository = WeatherDataRepository.getInstance(getContext());
+        repository.getWeatherInfo();
+        repository.getForecastsInfo();
 
     }
 
