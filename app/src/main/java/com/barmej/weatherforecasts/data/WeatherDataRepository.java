@@ -5,8 +5,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
+import com.barmej.weatherforecasts.data.database.AppDatabase;
 import com.barmej.weatherforecasts.data.entity.ForecastLists;
 import com.barmej.weatherforecasts.data.entity.WeatherForecasts;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
@@ -22,8 +22,12 @@ public class WeatherDataRepository {
 
     private static final String TAG = WeatherDataRepository.class.getSimpleName();
     private static final Object LOCK = new Object();
+
     private static WeatherDataRepository sInstance;
+
     private NetworkUtils mNetworkUtils;
+    private AppDatabase mAppDatabase;
+
     private Call<WeatherInfo> mWeatherCall;
     private Call<WeatherForecasts> mForecastsCall;
 
@@ -32,6 +36,7 @@ public class WeatherDataRepository {
      */
     private WeatherDataRepository(Context context) {
         mNetworkUtils = NetworkUtils.getInstance(context);
+        mAppDatabase = AppDatabase.getInstance(context);
     }
 
     /**
@@ -57,8 +62,8 @@ public class WeatherDataRepository {
      */
     public LiveData<WeatherInfo> getWeatherInfo() {
 
-        // Create MutableLiveData to observe data changes
-        final MutableLiveData<WeatherInfo> weatherInfoLiveData = new MutableLiveData<>();
+        // Get LiveData object from database using Room
+        final LiveData<WeatherInfo> weatherInfoLiveData = mAppDatabase.weatherInfoDao().getWeatherInfo();
 
         // Create a new WeatherInfo call using Retrofit API interface
         mWeatherCall = mNetworkUtils.getApiInterface().getWeatherInfo(mNetworkUtils.getQueryMap());
@@ -71,7 +76,7 @@ public class WeatherDataRepository {
                     // Get WeatherInfo object from response body
                     WeatherInfo weatherInfo = response.body();
                     if (weatherInfo != null) {
-                        weatherInfoLiveData.setValue(weatherInfo);
+                        updateWeatherInfo(weatherInfo);
                     }
                 }
             }
@@ -92,8 +97,8 @@ public class WeatherDataRepository {
      */
     public LiveData<ForecastLists> getForecastsInfo() {
 
-        // Create MutableLiveData to observe data changes
-        final MutableLiveData<ForecastLists> forecastsLiveData = new MutableLiveData<>();
+        // Get LiveData object from database using Room
+        final LiveData<ForecastLists> forecastsLiveData = mAppDatabase.forecastDao().getForecasts();
 
         // Create a new WeatherForecasts call using Retrofit API interface
         mForecastsCall = mNetworkUtils.getApiInterface().getForecasts(mNetworkUtils.getQueryMap());
@@ -106,7 +111,7 @@ public class WeatherDataRepository {
                     WeatherForecasts weatherForecasts = response.body();
                     if (weatherForecasts != null) {
                         ForecastLists forecastLists = OpenWeatherDataParser.getForecastsDataFromWeatherForecasts(weatherForecasts);
-                        forecastsLiveData.setValue(forecastLists);
+                        updateForecastLists(forecastLists);
                     }
                 }
             }
@@ -126,6 +131,27 @@ public class WeatherDataRepository {
     public void cancelDataRequests() {
         mWeatherCall.cancel();
         mForecastsCall.cancel();
+    }
+
+
+    /**
+     * Empty weather info table and save new weather info to database
+     *
+     * @param weatherInfo new weather info object we got from API
+     */
+    public void updateWeatherInfo(final WeatherInfo weatherInfo) {
+        mAppDatabase.weatherInfoDao().deleteAllWeatherInfo();
+        mAppDatabase.weatherInfoDao().addWeatherInfo(weatherInfo);
+    }
+
+    /**
+     * Empty forecasts table and save new forecasts info to database
+     *
+     * @param forecastLists new forecasts list we got from API
+     */
+    public void updateForecastLists(final ForecastLists forecastLists) {
+        mAppDatabase.forecastDao().deleteAllForecastsInfo();
+        mAppDatabase.forecastDao().addForecastsList(forecastLists);
     }
 
 

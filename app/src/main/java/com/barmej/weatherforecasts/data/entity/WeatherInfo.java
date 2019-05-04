@@ -1,15 +1,33 @@
 package com.barmej.weatherforecasts.data.entity;
 
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.List;
 
+@Entity(tableName = "weather_info")
 public class WeatherInfo {
 
+    @PrimaryKey
+    private int id = 0;
     private List<Weather> weather = null;
+    @Embedded
     private Main main;
+    @Embedded
     private Wind wind;
+    @Embedded
     private Sys sys;
     private long dt;
     private String name;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public List<Weather> getWeather() {
         return weather;

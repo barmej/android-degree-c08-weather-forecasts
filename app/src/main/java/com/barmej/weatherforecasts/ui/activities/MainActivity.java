@@ -182,9 +182,11 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.getWeatherInfoLiveData().observe(this, new Observer<WeatherInfo>() {
             @Override
             public void onChanged(WeatherInfo weatherInfo) {
-                mHeaderLayout.setVisibility(View.VISIBLE);
-                updateSunriseAndSunsetTimes(weatherInfo);
-                changeWindowBackground();
+                if (weatherInfo != null) {
+                    mHeaderLayout.setVisibility(View.VISIBLE);
+                    updateSunriseAndSunsetTimes(weatherInfo);
+                    changeWindowBackground();
+                }
             }
         });
     }
@@ -197,10 +199,12 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.getForecastListsLiveData().observe(this, new Observer<ForecastLists>() {
             @Override
             public void onChanged(ForecastLists forecastLists) {
-                mHoursForecastAdapter.updateData(forecastLists.getHoursForecasts());
-                mDaysForecastsAdapter.updateData(forecastLists.getDaysForecasts());
-                mHoursForecastsRecyclerView.setVisibility(View.VISIBLE);
-                mDaysForecastRecyclerView.setVisibility(View.VISIBLE);
+                if (forecastLists != null) {
+                    mHoursForecastAdapter.updateData(forecastLists.getHoursForecasts());
+                    mDaysForecastsAdapter.updateData(forecastLists.getDaysForecasts());
+                    mHoursForecastsRecyclerView.setVisibility(View.VISIBLE);
+                    mDaysForecastRecyclerView.setVisibility(View.VISIBLE);
+                }
             }
         });
     }

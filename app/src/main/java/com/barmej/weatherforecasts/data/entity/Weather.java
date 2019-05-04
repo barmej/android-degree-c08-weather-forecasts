@@ -4,8 +4,6 @@ public class Weather {
 
     private long id;
 
-    private String main;
-
     private String description;
 
     private String icon;
@@ -16,14 +14,6 @@ public class Weather {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getMain() {
-        return main;
-    }
-
-    public void setMain(String main) {
-        this.main = main;
     }
 
     public String getDescription() {
