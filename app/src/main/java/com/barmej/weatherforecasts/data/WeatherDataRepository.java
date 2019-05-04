@@ -11,6 +11,7 @@ import com.barmej.weatherforecasts.data.entity.ForecastLists;
 import com.barmej.weatherforecasts.data.entity.WeatherForecasts;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 import com.barmej.weatherforecasts.data.network.NetworkUtils;
+import com.barmej.weatherforecasts.utils.AppExecutor;
 import com.barmej.weatherforecasts.utils.OpenWeatherDataParser;
 
 import retrofit2.Call;
@@ -27,6 +28,7 @@ public class WeatherDataRepository {
 
     private NetworkUtils mNetworkUtils;
     private AppDatabase mAppDatabase;
+    private AppExecutor mAppExecutor;
 
     private Call<WeatherInfo> mWeatherCall;
     private Call<WeatherForecasts> mForecastsCall;
@@ -37,6 +39,7 @@ public class WeatherDataRepository {
     private WeatherDataRepository(Context context) {
         mNetworkUtils = NetworkUtils.getInstance(context);
         mAppDatabase = AppDatabase.getInstance(context);
+        mAppExecutor = AppExecutor.getInstance();
     }
 
     /**
@@ -140,8 +143,13 @@ public class WeatherDataRepository {
      * @param weatherInfo new weather info object we got from API
      */
     public void updateWeatherInfo(final WeatherInfo weatherInfo) {
-        mAppDatabase.weatherInfoDao().deleteAllWeatherInfo();
-        mAppDatabase.weatherInfoDao().addWeatherInfo(weatherInfo);
+        mAppExecutor.getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mAppDatabase.weatherInfoDao().deleteAllWeatherInfo();
+                mAppDatabase.weatherInfoDao().addWeatherInfo(weatherInfo);
+            }
+        });
     }
 
     /**
@@ -150,8 +158,13 @@ public class WeatherDataRepository {
      * @param forecastLists new forecasts list we got from API
      */
     public void updateForecastLists(final ForecastLists forecastLists) {
-        mAppDatabase.forecastDao().deleteAllForecastsInfo();
-        mAppDatabase.forecastDao().addForecastsList(forecastLists);
+        mAppExecutor.getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mAppDatabase.forecastDao().deleteAllForecastsInfo();
+                mAppDatabase.forecastDao().addForecastsList(forecastLists);
+            }
+        });
     }
 
 

@@ -30,7 +30,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         context.getApplicationContext(),
                         AppDatabase.class,
                         AppDatabase.DATABASE_NAME
-                ).allowMainThreadQueries().build();
+                ).build();
             }
         }
         return sInstance;
