@@ -1,5 +1,6 @@
 package com.barmej.weatherforecasts.data.entity;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -10,7 +11,9 @@ public class ForecastLists {
 
     @PrimaryKey
     private int id = 0;
+    @ColumnInfo(name = "hours_forecasts")
     private List<Forecast> hoursForecasts = null;
+    @ColumnInfo(name = "days_forecasts")
     private List<List<Forecast>> daysForecasts = null;
 
     public int getId() {
