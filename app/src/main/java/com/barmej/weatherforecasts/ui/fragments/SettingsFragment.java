@@ -41,14 +41,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     @Override
     public void onStart() {
         super.onStart();
-        // register the preference change listener
+        // Register the preference change listener
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // unregister the preference change listener
+        // Unregister the preference change listener
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 

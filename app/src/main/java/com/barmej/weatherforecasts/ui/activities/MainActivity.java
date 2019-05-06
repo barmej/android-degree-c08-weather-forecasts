@@ -6,10 +6,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -31,9 +29,6 @@ import com.barmej.weatherforecasts.utils.CustomDateUtils;
 import com.barmej.weatherforecasts.utils.SharedPreferencesHelper;
 import com.barmej.weatherforecasts.viewmodel.MainViewModel;
 import com.google.android.material.tabs.TabLayout;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * MainActivity that show current weather info, next hours & days forecasts
@@ -115,11 +110,6 @@ public class MainActivity extends AppCompatActivity {
         // Update window background based on hour of the day
         changeWindowBackground();
 
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     /**
@@ -232,11 +222,8 @@ public class MainActivity extends AppCompatActivity {
      */
     class HeaderFragmentAdapter extends FragmentPagerAdapter {
 
-        private List<Fragment> fragments;
-
         HeaderFragmentAdapter(FragmentManager fm) {
             super(fm);
-            this.fragments = new ArrayList<>();
         }
 
         @Override
@@ -253,15 +240,6 @@ public class MainActivity extends AppCompatActivity {
                     return new SecondaryWeatherInfoFragment();
             }
             return null;
-        }
-
-        @Override
-        public @NonNull
-        Object instantiateItem(@NonNull ViewGroup container, int position) {
-            // Update the array list to refer to the instantiated fragments
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            fragments.add(position, fragment);
-            return fragment;
         }
 
     }

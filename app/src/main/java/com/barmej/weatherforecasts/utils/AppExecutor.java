@@ -38,12 +38,24 @@ public class AppExecutor {
      */
     private final Executor mainThread;
 
+    /**
+     * Constructor use to initialize Executor instances
+     *
+     * @param diskIO     instance of Executor used for local storage operations
+     * @param networkIO  instance of Executor for network operations
+     * @param mainThread instance MainThreadExecutor to be used for main thread operations
+     */
     private AppExecutor(Executor diskIO, Executor networkIO, Executor mainThread) {
         this.diskIO = diskIO;
         this.networkIO = networkIO;
         this.mainThread = mainThread;
     }
 
+    /**
+     * Method used to get an instance of AppExecutor class
+     *
+     * @return an instance of AppExecutor class
+     */
     public static AppExecutor getInstance() {
         if (sInstance == null) {
             synchronized (LOCK) {
@@ -59,6 +71,7 @@ public class AppExecutor {
         }
         return sInstance;
     }
+
 
     /**
      * Get instance of Executor class to use for local storage related operations

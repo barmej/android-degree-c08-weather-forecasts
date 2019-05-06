@@ -9,6 +9,9 @@ import java.util.List;
 @Entity(tableName = "weather_info")
 public class WeatherInfo {
 
+    /**
+     * We added fixed pr
+     */
     @PrimaryKey
     private int id = 0;
     private List<Weather> weather = null;

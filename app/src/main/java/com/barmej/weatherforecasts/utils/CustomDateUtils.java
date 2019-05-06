@@ -77,6 +77,7 @@ public final class CustomDateUtils {
             int flags = FORMAT_SHOW_DATE | FORMAT_NO_YEAR | FORMAT_ABBREV_ALL | FORMAT_SHOW_WEEKDAY;
             return DateUtils.formatDateTime(context, timeInMillis, flags);
         }
+
     }
 
     /**
@@ -99,7 +100,6 @@ public final class CustomDateUtils {
      * @return the string day of the week
      */
     private static String getDayName(Context context, long dateInMillis) {
-
         long daysFromEpochToProvidedDate = elapsedDaysSinceEpoch(dateInMillis);
         long daysFromEpochToToday = elapsedDaysSinceEpoch(System.currentTimeMillis());
         int daysAfterToday = (int) (daysFromEpochToProvidedDate - daysFromEpochToToday);

@@ -4,12 +4,7 @@ import android.util.Log;
 
 import com.barmej.weatherforecasts.data.entity.Forecast;
 import com.barmej.weatherforecasts.data.entity.ForecastLists;
-import com.barmej.weatherforecasts.data.entity.Main;
-import com.barmej.weatherforecasts.data.entity.Sys;
-import com.barmej.weatherforecasts.data.entity.Weather;
 import com.barmej.weatherforecasts.data.entity.WeatherForecasts;
-import com.barmej.weatherforecasts.data.entity.WeatherInfo;
-import com.barmej.weatherforecasts.data.entity.Wind;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,20 +33,12 @@ public class OpenWeatherDataParser {
     /**
      * Location information
      */
-    private static final String OWM_CITY = "city";
     private static final String OWM_CITY_NAME = "name";
-
-    /**
-     * Weather information list
-     * Each day's forecast info is an element of the "list" array
-     */
-    private static final String OWM_LIST = "list";
 
     /**
      * Date and time
      */
     private static final String OWM_DATE = "dt";
-    private static final String OWM_DATE_TEXT = "dt_txt";
 
     /**
      * Wind information
@@ -109,59 +96,6 @@ public class OpenWeatherDataParser {
             e.printStackTrace();
         }
         return true;
-    }
-
-    /**
-     * @param weatherJson response json we got from OpenWeatherMap weather endpoint
-     * @return WeatherInfo object that carries all the weather information extracted from JSON string
-     * @throws JSONException exception that occurs if there is an error happened while parsing JSON
-     */
-    public static WeatherInfo getWeatherInfoObjectFromJson(JSONObject weatherJson) throws JSONException {
-
-        // Check if there is an error in the json
-        if (isError(weatherJson)) {
-            return null;
-        }
-
-        // Weather description is in a child array called "weather", which is 1 element long.
-        JSONObject weatherObject = weatherJson.getJSONArray(OWM_WEATHER).getJSONObject(0);
-
-        // Temperatures are sent by OpenWeatherMap in a child object called Main
-        JSONObject mainObject = weatherJson.getJSONObject(OWM_MAIN);
-
-        // Wind speed and direction are wrapped in a Wind object
-        JSONObject windObject = weatherJson.getJSONObject(OWM_WIND);
-
-        // Sunrise and sunset times
-        JSONObject sysObject = weatherJson.getJSONObject(OWM_SYS);
-
-        // Get data from Json and assign it to Java object
-        WeatherInfo weatherInfo = new WeatherInfo();
-        weatherInfo.setDt(weatherJson.getLong(OWM_DATE));
-        Main main = new Main();
-        main.setTemp(mainObject.getDouble(OWM_TEMPERATURE));
-        main.setTempMax(mainObject.getDouble(OWM_MAX));
-        main.setTempMin(mainObject.getDouble(OWM_MIN));
-        main.setHumidity(mainObject.getInt(OWM_HUMIDITY));
-        main.setPressure(mainObject.getLong(OWM_PRESSURE));
-        weatherInfo.setMain(main);
-        Wind wind = new Wind();
-        wind.setSpeed(windObject.getDouble(OWM_WINDSPEED));
-        wind.setDeg(windObject.has(OWM_WIND_DIRECTION) ? windObject.getLong(OWM_WIND_DIRECTION) : Integer.MAX_VALUE);
-        weatherInfo.setWind(wind);
-        Weather weather = new Weather();
-        weather.setDescription(weatherObject.getString(OWM_WEATHER_DESCRIPTION));
-        weather.setIcon(weatherObject.getString(OWM_WEATHER_ICON));
-        List<Weather> weatherList = new ArrayList<>();
-        weatherList.add(weather);
-        weatherInfo.setWeather(weatherList);
-        weatherInfo.setName(weatherJson.has(OWM_CITY_NAME) ? weatherJson.getString(OWM_CITY_NAME) : "");
-        Sys sys = new Sys();
-        sys.setSunrise(sysObject.getLong(OWM_SUNRISE));
-        sys.setSunset(sysObject.getLong(OWM_SUNSET));
-        weatherInfo.setSys(sys);
-        return weatherInfo;
-
     }
 
     /**

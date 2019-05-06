@@ -9,10 +9,14 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
+/**
+ * This class used by Room to convert weather list from & to json string
+ */
 public class WeatherListConverter {
 
     @TypeConverter
     public static List<Weather> fromString(String value) {
+        // Convert json string to List using Gson library
         Type listType = new TypeToken<List<Weather>>() {
         }.getType();
         return new Gson().fromJson(value, listType);
@@ -20,6 +24,7 @@ public class WeatherListConverter {
 
     @TypeConverter
     public static String fromList(List<Weather> list) {
+        // Convert List to json string using Gson library
         return new Gson().toJson(list);
     }
 

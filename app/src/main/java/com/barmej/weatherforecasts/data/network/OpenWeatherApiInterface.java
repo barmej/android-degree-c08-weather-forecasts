@@ -9,6 +9,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.QueryMap;
 
+/**
+ * Retrofit API interface used to access data from OpenWeatherMap APIs
+ */
 public interface OpenWeatherApiInterface {
 
     /**

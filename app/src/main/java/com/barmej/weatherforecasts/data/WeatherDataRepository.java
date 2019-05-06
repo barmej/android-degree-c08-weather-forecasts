@@ -18,7 +18,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
+/**
+ * Repository class used for all data operations
+ * It uses {@link NetworkUtils} class to access data from APIs
+ * and {@link AppDatabase} class to access data from local database
+ */
 public class WeatherDataRepository {
 
     private static final String TAG = WeatherDataRepository.class.getSimpleName();
@@ -163,7 +167,7 @@ public class WeatherDataRepository {
      *
      * @param weatherInfo new weather info object we got from API
      */
-    public void updateWeatherInfo(final WeatherInfo weatherInfo) {
+    private void updateWeatherInfo(final WeatherInfo weatherInfo) {
         mAppExecutor.getDiskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -178,7 +182,7 @@ public class WeatherDataRepository {
      *
      * @param forecastLists new forecasts list we got from API
      */
-    public void updateForecastLists(final ForecastLists forecastLists) {
+    private void updateForecastLists(final ForecastLists forecastLists) {
         mAppExecutor.getDiskIO().execute(new Runnable() {
             @Override
             public void run() {

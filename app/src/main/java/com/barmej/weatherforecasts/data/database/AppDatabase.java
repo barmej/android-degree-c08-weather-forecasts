@@ -15,6 +15,9 @@ import com.barmej.weatherforecasts.data.database.dao.WeatherInfoDao;
 import com.barmej.weatherforecasts.data.entity.ForecastLists;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 
+/**
+ * Room database class used to create database and access DAOs
+ */
 @Database(entities = {WeatherInfo.class, ForecastLists.class}, version = 1, exportSchema = false)
 @TypeConverters({WeatherListConverter.class, HoursForecastsConverter.class, DaysForecastsConverter.class})
 public abstract class AppDatabase extends RoomDatabase {

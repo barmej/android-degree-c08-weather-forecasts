@@ -10,6 +10,10 @@ import androidx.room.Update;
 
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 
+/**
+ * Data access object interface used by Room to query, insert, update and delete
+ * weather info from database
+ */
 @Dao
 public interface WeatherInfoDao {
 
