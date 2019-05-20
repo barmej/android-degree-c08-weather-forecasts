@@ -4,11 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -16,8 +15,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.barmej.weatherforecasts.R;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
-import com.barmej.weatherforecasts.utils.CustomDateUtils;
-import com.barmej.weatherforecasts.utils.WeatherUtils;
+import com.barmej.weatherforecasts.databinding.FragmentPrimaryWeatherInfoBinding;
 import com.barmej.weatherforecasts.viewmodel.MainViewModel;
 
 /**
@@ -27,14 +25,10 @@ import com.barmej.weatherforecasts.viewmodel.MainViewModel;
  */
 public class PrimaryWeatherInfoFragment extends Fragment {
 
-    private ImageView mIconImageView;
-    private TextView mCityNameTextView;
-    private TextView mDateTextView;
-    private TextView mDescriptionTextView;
-    private TextView mTemperatureTextView;
-    private TextView mHighLowTempTextView;
-
-    private WeatherInfo mWeatherInfo;
+    /**
+     * An instance of auto generated data binding class
+     */
+    private FragmentPrimaryWeatherInfoBinding mBinding;
 
     /**
      * Required empty public constructor
@@ -50,25 +44,15 @@ public class PrimaryWeatherInfoFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_primary_weather_info, container, false);
+        // Inflate the layout using data binding class
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_primary_weather_info, container, false);
+        // Return the inflated view object
+        return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        View mainView = getView();
-
-        if (mainView == null) return;
-
-        // Initialize member variables
-        mIconImageView = mainView.findViewById(R.id.weather_icon);
-        mCityNameTextView = mainView.findViewById(R.id.city);
-        mDateTextView = mainView.findViewById(R.id.date);
-        mDescriptionTextView = mainView.findViewById(R.id.weather_description);
-        mTemperatureTextView = mainView.findViewById(R.id.temperature);
-        mHighLowTempTextView = mainView.findViewById(R.id.high_low_temperature);
 
         FragmentActivity activity = getActivity();
         if (activity != null) {
@@ -78,74 +62,11 @@ public class PrimaryWeatherInfoFragment extends Fragment {
             mainViewModel.getWeatherInfoLiveData().observe(this, new Observer<WeatherInfo>() {
                 @Override
                 public void onChanged(@Nullable WeatherInfo weatherInfo) {
-                    // Update weather info object and reflect the updated data on UI
-                    mWeatherInfo = weatherInfo;
-                    showWeatherInfo();
+                    // Add java object to data binding to update data on UI
+                    mBinding.setWeatherInfo(weatherInfo);
                 }
             });
         }
-
-    }
-
-    /**
-     * This method used to show current weather info inside user interface views
-     */
-    private void showWeatherInfo() {
-
-        if (mWeatherInfo == null) {
-            return;
-        }
-
-        /* Weather Icon ************************************************************************* */
-
-        // Get the weather icon resource id based on icon string passed from the api
-        int weatherImageId = WeatherUtils.getWeatherIcon(mWeatherInfo.getWeather().get(0).getIcon());
-
-        // Display weather condition icon
-        mIconImageView.setImageResource(weatherImageId);
-
-        /* Current city ************************************************************************* */
-
-        // Read date from weather info object
-        String cityName = mWeatherInfo.getName();
-
-        // Display city name
-        mCityNameTextView.setText(cityName);
-
-        /* Weather Date ************************************************************************* */
-
-        // Get human readable string using getFriendlyDateString utility method and display it
-        String dateString = CustomDateUtils.getFriendlyDateString(getContext(), mWeatherInfo.getDt(), false);
-
-        /* Display friendly date string */
-        mDateTextView.setText(dateString);
-
-        /* Weather Description ****************************************************************** */
-
-        // Get weather condition description
-        String description = mWeatherInfo.getWeather().get(0).getDescription();
-
-        // Display weather description
-        mDescriptionTextView.setText(description);
-
-        /* Temperature ************************************************************************** */
-
-        // Read temperature from weather object
-        String temperatureString = getString(R.string.format_temperature, mWeatherInfo.getMain().getTemp());
-
-        // Display high temperature
-        mTemperatureTextView.setText(temperatureString);
-
-        /* High (max) & Low (min) temperature temperature *************************************** */
-
-        // Read high temperature from weather object
-        double highTemperature = mWeatherInfo.getMain().getTempMax();
-
-        // Read low temperature from weather object
-        double lowTemperature = mWeatherInfo.getMain().getTempMin();
-
-        // Display high/low temperature
-        mHighLowTempTextView.setText(getString(R.string.high_low_temperature, highTemperature, lowTemperature));
 
     }
 

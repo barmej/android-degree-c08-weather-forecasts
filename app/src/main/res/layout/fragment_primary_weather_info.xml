@@ -1,117 +1,144 @@
-<?xml version="1.0" encoding="utf-8"?><!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  - This layout displays today's primary weather info such as weather icon & description, and    -
-  -  the high & low temperature in addition to city name and today's date.                       -                             -
+<?xml version="1.0" encoding="utf-8"?><!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - In order to use Android's data binding library (to avoid having to type findViewById           -
+  - over and over again) we wrap this layout in a <layout> tag.                                    -
   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="@dimen/large_space"
-    android:paddingBottom="@dimen/large_space"
-    tools:showIn="@layout/activity_main">
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - Declare data object variable to be used as attributes by data binding expressions to bind  -
+      - Views with data object                                                                     -
+      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+    <data>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     - This guideline divides the layout into two halves and it's used to anchor the views       -
-     - to the middle of the screen.                                                              -
-     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_middle"
-        android:layout_width="wrap_content"
+        <import type="com.barmej.weatherforecasts.utils.CustomDateUtils" />
+
+        <import type="com.barmej.weatherforecasts.utils.WeatherUtils" />
+
+        <variable
+            name="weatherInfo"
+            type="com.barmej.weatherforecasts.data.entity.WeatherInfo" />
+
+    </data>
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - This layout displays today's primary weather info such as weather icon & description, and  -
+      -  the high & low temperature in addition to city name and today's date.                     -                             -
+      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+        android:paddingTop="@dimen/large_space"
+        android:paddingBottom="@dimen/large_space"
+        tools:background="@color/primary">
 
-    <!-- Current city -->
-    <TextView
-        android:id="@+id/city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="@color/text_primary"
-        android:textSize="@dimen/weather_info_text_size"
-        app:layout_constraintBaseline_toBaselineOf="@+id/date"
-        app:layout_constraintEnd_toEndOf="@+id/temperature"
-        app:layout_constraintStart_toStartOf="@+id/temperature"
-        tools:text="State of Kuwait" />
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+         - This guideline divides the layout into two halves and it's used to anchor the views     -
+         - to the middle of the screen.                                                            -
+         - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
-    <!-- Today's date -->
-    <TextView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/large_space"
-        android:fontFamily="sans-serif"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="@color/text_primary"
-        android:textSize="@dimen/weather_info_text_size"
-        app:layout_constraintBottom_toTopOf="@+id/weather_icon"
-        app:layout_constraintEnd_toEndOf="@+id/weather_icon"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/weather_icon"
-        tools:text="Today, April 03" />
+        <!-- Current city -->
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@{weatherInfo.name}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/weather_info_text_size"
+            app:layout_constraintBaseline_toBaselineOf="@+id/date"
+            app:layout_constraintEnd_toEndOf="@+id/temperature"
+            app:layout_constraintStart_toStartOf="@+id/temperature"
+            tools:text="State of Kuwait" />
 
-    <!-- Icon indicating weather condition -->
-    <ImageView
-        android:id="@+id/weather_icon"
-        android:layout_width="@dimen/main_icon_size"
-        android:layout_height="@dimen/main_icon_size"
-        android:layout_marginStart="@dimen/small_space"
-        android:layout_marginEnd="@dimen/small_space"
-        android:adjustViewBounds="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/horizontal_middle"
-        app:layout_constraintStart_toStartOf="@+id/horizontal_middle"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_few_clouds" />
+        <!-- Today's date -->
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/large_space"
+            android:fontFamily="sans-serif"
+            android:text="@{CustomDateUtils.getFriendlyDateString(context, weatherInfo.dt, false)}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/weather_info_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/weather_icon"
+            app:layout_constraintEnd_toEndOf="@+id/weather_icon"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/weather_icon"
+            tools:text="Today, April 03" />
 
-    <!-- Text that describes weather condition -->
-    <TextView
-        android:id="@+id/weather_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/small_space"
-        android:textColor="@color/text_primary"
-        android:textSize="@dimen/weather_info_text_size"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="@+id/weather_icon"
-        app:layout_constraintRight_toRightOf="@+id/weather_icon"
-        app:layout_constraintTop_toBottomOf="@+id/weather_icon"
-        tools:text="Cloudy" />
+        <!-- Icon indicating weather condition -->
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="@dimen/main_icon_size"
+            android:layout_height="@dimen/main_icon_size"
+            android:layout_marginStart="@dimen/small_space"
+            android:layout_marginEnd="@dimen/small_space"
+            android:adjustViewBounds="true"
+            app:imageResource="@{WeatherUtils.getWeatherIcon(weatherInfo.weather[0].icon ?? ``)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/horizontal_middle"
+            app:layout_constraintStart_toStartOf="@+id/horizontal_middle"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_few_clouds" />
 
-    <!-- Today's temperature -->
-    <TextView
-        android:id="@+id/temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/small_space"
-        android:layout_marginEnd="@dimen/small_space"
-        android:fontFamily="sans-serif-light"
-        android:textColor="@color/text_primary"
-        android:textSize="72dp"
-        app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
-        app:layout_constraintEnd_toStartOf="@+id/horizontal_middle"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="@+id/horizontal_middle"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/weather_icon"
-        tools:text="19°" />
+        <!-- Text that describes weather condition -->
+        <TextView
+            android:id="@+id/weather_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_space"
+            android:text="@{weatherInfo.weather[0].description}"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/weather_info_text_size"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="@+id/weather_icon"
+            app:layout_constraintRight_toRightOf="@+id/weather_icon"
+            app:layout_constraintTop_toBottomOf="@+id/weather_icon"
+            tools:text="Cloudy" />
 
-    <!-- High & Low temperature for today   -->
-    <TextView
-        android:id="@+id/high_low_temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
-        android:textColor="@color/text_primary"
-        android:textSize="36sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/weather_description"
-        app:layout_constraintLeft_toLeftOf="@+id/temperature"
-        app:layout_constraintRight_toRightOf="@+id/temperature"
-        tools:text="19° \\ 10°" />
+        <!-- Today's temperature -->
+        <TextView
+            android:id="@+id/temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_space"
+            android:layout_marginEnd="@dimen/small_space"
+            android:fontFamily="sans-serif-light"
+            android:text="@{@string/format_temperature(weatherInfo.main.temp)}"
+            android:textColor="@color/text_primary"
+            android:textSize="72dp"
+            app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_middle"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="@+id/horizontal_middle"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/weather_icon"
+            tools:text="19°" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- High & Low temperature for today   -->
+        <TextView
+            android:id="@+id/high_low_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:text="@{@string/high_low_temperature(weatherInfo.main.tempMax, weatherInfo.main.tempMin)}"
+            android:textColor="@color/text_primary"
+            android:textSize="36sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/weather_description"
+            app:layout_constraintLeft_toLeftOf="@+id/temperature"
+            app:layout_constraintRight_toRightOf="@+id/temperature"
+            tools:text="19° \\ 10°" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

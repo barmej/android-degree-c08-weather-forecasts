@@ -14,7 +14,7 @@ public class Main {
     @ColumnInfo(name = "temp_max")
     private double tempMax;
     private double pressure;
-    private long humidity;
+    private double humidity;
 
     public double getTemp() {
         return temp;
@@ -49,11 +49,11 @@ public class Main {
     }
 
 
-    public long getHumidity() {
+    public double getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(long humidity) {
+    public void setHumidity(double humidity) {
         this.humidity = humidity;
     }
 

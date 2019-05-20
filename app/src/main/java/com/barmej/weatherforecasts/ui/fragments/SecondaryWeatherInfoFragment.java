@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.barmej.weatherforecasts.R;
 import com.barmej.weatherforecasts.data.entity.WeatherInfo;
-import com.barmej.weatherforecasts.utils.WeatherUtils;
+import com.barmej.weatherforecasts.databinding.FragmentSecondaryWeatherInfoBinding;
 import com.barmej.weatherforecasts.viewmodel.MainViewModel;
 
 /**
@@ -24,11 +24,10 @@ import com.barmej.weatherforecasts.viewmodel.MainViewModel;
  */
 public class SecondaryWeatherInfoFragment extends Fragment {
 
-    private TextView humidityTextView;
-    private TextView pressureTextView;
-    private TextView windTextView;
-
-    private WeatherInfo mWeatherInfo;
+    /**
+     * An instance of auto generated data binding class
+     */
+    private FragmentSecondaryWeatherInfoBinding mBinding;
 
     /**
      * Required empty public constructor
@@ -44,22 +43,15 @@ public class SecondaryWeatherInfoFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_secondary_weather_info, container, false);
+        // Inflate the layout using data binding class
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_secondary_weather_info, container, false);
+        // Return the inflated view object
+        return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        View mainView = getView();
-
-        if (mainView == null) return;
-
-        // Initialize member variables
-        humidityTextView = mainView.findViewById(R.id.humidity);
-        pressureTextView = mainView.findViewById(R.id.pressure);
-        windTextView = mainView.findViewById(R.id.wind_measurement);
 
         FragmentActivity activity = getActivity();
         if (activity != null) {
@@ -69,61 +61,11 @@ public class SecondaryWeatherInfoFragment extends Fragment {
             mainViewModel.getWeatherInfoLiveData().observe(this, new Observer<WeatherInfo>() {
                 @Override
                 public void onChanged(@Nullable WeatherInfo weatherInfo) {
-                    // Update weather info object and reflect the updated data on UI
-                    mWeatherInfo = weatherInfo;
-                    showWeatherInfo();
+                    // Add java object to data binding to update data on UI
+                    mBinding.setWeatherInfo(weatherInfo);
                 }
             });
         }
-
-    }
-
-    /**
-     * This method used to show current weather info inside user interface views
-     */
-    private void showWeatherInfo() {
-
-        if (mWeatherInfo == null) {
-            return;
-        }
-
-        /* Humidity ***************************************************************************** */
-
-        // Read humidity from weather object
-        float humidity = mWeatherInfo.getMain().getHumidity();
-
-        // Append % symbol to the humidity value and get it as a String
-        String humidityString = getString(R.string.format_humidity, humidity);
-
-        // Display the humidity text
-        humidityTextView.setText(humidityString);
-
-        /* Wind speed and direction ************************************************************* */
-
-        // Read wind speed & direction from weather object
-        double windSpeed = mWeatherInfo.getWind().getSpeed();
-        double windDirection = mWeatherInfo.getWind().getDeg();
-
-        if (getContext() != null) {
-
-            // Get formatted wind speed & direction text
-            String windString = WeatherUtils.getFormattedWind(getContext(), windSpeed, windDirection);
-
-            // Display wind speed & direction text
-            windTextView.setText(windString);
-
-        }
-
-        /* Pressure ***************************************************************************** */
-
-        // Read pressure from weather object
-        double pressure = mWeatherInfo.getMain().getPressure();
-
-        // Append pressure unit to the pressure value and return it as a String
-        String pressureString = getString(R.string.format_pressure, pressure);
-
-        // Display the pressure text
-        pressureTextView.setText(pressureString);
 
     }
 
