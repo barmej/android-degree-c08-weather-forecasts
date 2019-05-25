@@ -13,9 +13,11 @@
 
         <import type="com.barmej.weatherforecasts.utils.WeatherUtils" />
 
+        <import type="androidx.lifecycle.LiveData" />
+
         <variable
             name="weatherInfo"
-            type="com.barmej.weatherforecasts.data.entity.WeatherInfo" />
+            type="LiveData&lt;com.barmej.weatherforecasts.data.entity.WeatherInfo>" />
 
     </data>
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

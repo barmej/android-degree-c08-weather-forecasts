@@ -10,11 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.barmej.weatherforecasts.R;
-import com.barmej.weatherforecasts.data.entity.WeatherInfo;
 import com.barmej.weatherforecasts.databinding.FragmentPrimaryWeatherInfoBinding;
 import com.barmej.weatherforecasts.viewmodel.MainViewModel;
 
@@ -46,6 +44,10 @@ public class PrimaryWeatherInfoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout using data binding class
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_primary_weather_info, container, false);
+
+        // Specify the current fragment as the lifecycle owner.
+        mBinding.setLifecycleOwner(this);
+
         // Return the inflated view object
         return mBinding.getRoot();
     }
@@ -58,14 +60,8 @@ public class PrimaryWeatherInfoFragment extends Fragment {
         if (activity != null) {
             // Get a handle on the MainViewModel of the host Activity
             MainViewModel mainViewModel = ViewModelProviders.of(activity).get(MainViewModel.class);
-            // Observe data change to populate UI with the new data
-            mainViewModel.getWeatherInfoLiveData().observe(this, new Observer<WeatherInfo>() {
-                @Override
-                public void onChanged(@Nullable WeatherInfo weatherInfo) {
-                    // Add java object to data binding to update data on UI
-                    mBinding.setWeatherInfo(weatherInfo);
-                }
-            });
+            // Add LiveData object to data binding observe changes automatically and update UI
+            mBinding.setWeatherInfo(mainViewModel.getWeatherInfoLiveData());
         }
 
     }
