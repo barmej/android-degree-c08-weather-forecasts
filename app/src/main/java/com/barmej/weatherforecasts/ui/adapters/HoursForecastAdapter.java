@@ -2,18 +2,15 @@ package com.barmej.weatherforecasts.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.barmej.weatherforecasts.R;
 import com.barmej.weatherforecasts.data.entity.Forecast;
-import com.barmej.weatherforecasts.utils.CustomDateUtils;
-import com.barmej.weatherforecasts.utils.WeatherUtils;
+import com.barmej.weatherforecasts.databinding.ItemHourForecastBinding;
 
 import java.util.List;
 
@@ -56,8 +53,8 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
     @Override
     public @NonNull
     ForecastAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_hour_forecast, viewGroup, false);
-        return new ForecastAdapterViewHolder(view);
+        ItemHourForecastBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_hour_forecast, viewGroup, false);
+        return new ForecastAdapterViewHolder(binding);
     }
 
     /**
@@ -72,36 +69,8 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
      */
     @Override
     public void onBindViewHolder(@NonNull ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
-
         Forecast forecast = mForecasts.get(position);
-
-        /* Weather Icon ************************************************************************* */
-
-        // Get the weather icon resource id based on icon string passed from the api
-        int weatherImageId = WeatherUtils.getWeatherIcon(forecast.getWeather().get(0).getIcon());
-
-        // Display weather condition icon
-        forecastAdapterViewHolder.iconImageView.setImageResource(weatherImageId);
-
-        /* Weather Clock Time ******************************************************************* */
-
-        // Get human readable string using getHourOfDay utility method and display it
-        String hourClockString = CustomDateUtils.getHourOfDay(forecast.getDt());
-
-        // Display clock hour
-        forecastAdapterViewHolder.timeTextView.setText(hourClockString);
-
-        /* High (max) temperature *************************************************************** */
-
-        // Read high temperature from forecast object
-        double highTemperature = forecast.getMain().getTempMax();
-
-        // Get formatted high temperature string
-        String highTemperatureString = mContext.getString(R.string.format_temperature, highTemperature);
-
-        // Display high temperature
-        forecastAdapterViewHolder.temperatureTextView.setText(highTemperatureString);
-
+        forecastAdapterViewHolder.bind(forecast);
     }
 
     /**
@@ -134,15 +103,15 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
      */
     class ForecastAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        final ImageView iconImageView;
-        final TextView timeTextView;
-        final TextView temperatureTextView;
+        final ItemHourForecastBinding binding;
 
-        ForecastAdapterViewHolder(View view) {
-            super(view);
-            iconImageView = view.findViewById(R.id.weather_icon);
-            timeTextView = view.findViewById(R.id.time);
-            temperatureTextView = view.findViewById(R.id.temperature);
+        ForecastAdapterViewHolder(ItemHourForecastBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        void bind(Forecast forecast) {
+            binding.setForecast(forecast);
         }
 
     }

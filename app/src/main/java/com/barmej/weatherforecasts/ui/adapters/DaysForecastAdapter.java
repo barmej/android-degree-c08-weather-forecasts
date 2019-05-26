@@ -2,18 +2,15 @@ package com.barmej.weatherforecasts.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.barmej.weatherforecasts.R;
 import com.barmej.weatherforecasts.data.entity.Forecast;
-import com.barmej.weatherforecasts.utils.CustomDateUtils;
-import com.barmej.weatherforecasts.utils.WeatherUtils;
+import com.barmej.weatherforecasts.databinding.ItemDayForecastBinding;
 
 import java.util.List;
 
@@ -52,8 +49,8 @@ public class DaysForecastAdapter extends RecyclerView.Adapter<DaysForecastAdapte
     @Override
     public @NonNull
     ForecastAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_day_forecast, viewGroup, false);
-        return new ForecastAdapterViewHolder(view);
+        ItemDayForecastBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_day_forecast, viewGroup, false);
+        return new ForecastAdapterViewHolder(binding);
     }
 
     /**
@@ -68,57 +65,8 @@ public class DaysForecastAdapter extends RecyclerView.Adapter<DaysForecastAdapte
      */
     @Override
     public void onBindViewHolder(@NonNull ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
-
         Forecast forecast = mForecasts.get(position).get(0);
-
-        /* Weather Icon ************************************************************************* */
-
-        // Get the weather icon resource id based on icon string passed from the api
-        int weatherImageId = WeatherUtils.getWeatherIcon(forecast.getWeather().get(0).getIcon());
-
-        // Display weather condition icon
-        forecastAdapterViewHolder.iconImageView.setImageResource(weatherImageId);
-
-        /* Weather Date ************************************************************************* */
-
-        // Get human readable string using getFriendlyDateString utility method and display it
-        String dateString = CustomDateUtils.getFriendlyDateString(mContext, forecast.getDt(), false);
-
-        /* Display friendly date string */
-        forecastAdapterViewHolder.dateTextView.setText(dateString);
-
-        /* Weather Description ****************************************************************** */
-
-        // Get weather condition description
-        String description = forecast.getWeather().get(0).getDescription();
-
-        // Display weather description
-        forecastAdapterViewHolder.descriptionTextView.setText(description);
-
-
-        /* High (max) temperature *************************************************************** */
-
-        // Read high temperature from forecast object
-        double highTemperature = forecast.getMain().getTempMax();
-
-        // Get formatted high temperature string
-        String highTemperatureString = mContext.getString(R.string.format_temperature, highTemperature);
-
-        // Display high temperature
-        forecastAdapterViewHolder.highTempTextView.setText(highTemperatureString);
-
-
-        /* Low (min) temperature **************************************************************** */
-
-        // Read low temperature from forecast object
-        double lowTemperature = forecast.getMain().getTempMin();
-
-        // Get formatted low temperature string
-        String lowTemperatureString = mContext.getString(R.string.format_temperature, lowTemperature);
-
-        // Display low temperature
-        forecastAdapterViewHolder.lowTempTextView.setText(lowTemperatureString);
-
+        forecastAdapterViewHolder.bind(forecast);
     }
 
     /**
@@ -151,19 +99,15 @@ public class DaysForecastAdapter extends RecyclerView.Adapter<DaysForecastAdapte
      */
     class ForecastAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        final ImageView iconImageView;
-        final TextView dateTextView;
-        final TextView descriptionTextView;
-        final TextView highTempTextView;
-        final TextView lowTempTextView;
+        final ItemDayForecastBinding binding;
 
-        ForecastAdapterViewHolder(View view) {
-            super(view);
-            iconImageView = view.findViewById(R.id.weather_icon);
-            dateTextView = view.findViewById(R.id.date);
-            descriptionTextView = view.findViewById(R.id.weather_description);
-            highTempTextView = view.findViewById(R.id.high_temperature);
-            lowTempTextView = view.findViewById(R.id.low_temperature);
+        ForecastAdapterViewHolder(ItemDayForecastBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        void bind(Forecast forecast) {
+            binding.setForecast(forecast);
         }
 
     }
