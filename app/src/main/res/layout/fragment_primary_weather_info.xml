@@ -91,6 +91,7 @@
             app:layout_constraintRight_toLeftOf="@+id/horizontal_middle"
             app:layout_constraintStart_toStartOf="@+id/horizontal_middle"
             app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@{@string/access_forecast(weatherInfo.weather[0].description)}"
             tools:src="@drawable/ic_few_clouds" />
 
         <!-- Text that describes weather condition -->
@@ -119,6 +120,7 @@
             android:text="@{@string/format_temperature(weatherInfo.main.temp)}"
             android:textColor="@color/text_primary"
             android:textSize="72dp"
+            android:contentDescription="@{@string/access_high_temp(@string/format_temperature(weatherInfo.main.temp))}"
             app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
             app:layout_constraintEnd_toStartOf="@+id/horizontal_middle"
             app:layout_constraintHorizontal_bias="0.5"
@@ -137,6 +139,7 @@
             android:text="@{@string/high_low_temperature(weatherInfo.main.tempMax, weatherInfo.main.tempMin)}"
             android:textColor="@color/text_primary"
             android:textSize="36sp"
+            android:contentDescription="@{@string/access_high_low_temp(weatherInfo.main.tempMax, weatherInfo.main.tempMin)}"
             app:layout_constraintBaseline_toBaselineOf="@+id/weather_description"
             app:layout_constraintLeft_toLeftOf="@+id/temperature"
             app:layout_constraintRight_toRightOf="@+id/temperature"
