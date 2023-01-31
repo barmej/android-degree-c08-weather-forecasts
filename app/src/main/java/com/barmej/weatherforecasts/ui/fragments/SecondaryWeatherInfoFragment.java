@@ -66,7 +66,7 @@ public class SecondaryWeatherInfoFragment extends Fragment {
             // Get a handle on the MainViewModel of the host Activity
             MainViewModel mainViewModel = ViewModelProviders.of(activity).get(MainViewModel.class);
             // Observe data change to populate UI with the new data
-            mainViewModel.getWeatherInfoLiveData().observe(this, new Observer<WeatherInfo>() {
+            mainViewModel.getWeatherInfoLiveData().observe(getViewLifecycleOwner(), new Observer<WeatherInfo>() {
                 @Override
                 public void onChanged(@Nullable WeatherInfo weatherInfo) {
                     // Update weather info object and reflect the updated data on UI
@@ -98,6 +98,12 @@ public class SecondaryWeatherInfoFragment extends Fragment {
         // Display the humidity text
         humidityTextView.setText(humidityString);
 
+        // Create the accessibility String from the humidity
+        String humidityAccessibility = getString(R.string.access_humidity, humidityString);
+
+        // Set the content description (for accessibility purposes)
+        humidityTextView.setContentDescription(humidityAccessibility);
+
         /* Wind speed and direction ************************************************************* */
 
         // Read wind speed & direction from weather object
@@ -112,6 +118,12 @@ public class SecondaryWeatherInfoFragment extends Fragment {
             // Display wind speed & direction text
             windTextView.setText(windString);
 
+            // Create the accessibility String from the wind speed & direction
+            String windAccessibility = getString(R.string.access_wind, windString);
+
+            // Set the text and content description (for accessibility purposes)
+            windTextView.setContentDescription(windAccessibility);
+
         }
 
         /* Pressure ***************************************************************************** */
@@ -124,6 +136,12 @@ public class SecondaryWeatherInfoFragment extends Fragment {
 
         // Display the pressure text
         pressureTextView.setText(pressureString);
+
+        // Create the accessibility String from the pressure
+        String pressureAccessibility = getString(R.string.access_pressure, pressureString);
+
+        // Set the content description (for accessibility purposes)
+        pressureTextView.setContentDescription(pressureAccessibility);
 
     }
 
