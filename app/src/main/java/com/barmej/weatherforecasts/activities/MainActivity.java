@@ -321,11 +321,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public @NonNull
-        Object instantiateItem(@NonNull ViewGroup container, int position) {
+        public @NonNull Object instantiateItem(@NonNull ViewGroup container, int position) {
             // Update the array list to refer to the instantiated fragments
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            fragments.add(position, fragment);
+            fragments.add(position,fragment);
             return fragment;
         }
 
