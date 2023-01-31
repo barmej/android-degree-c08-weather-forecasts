@@ -4,10 +4,10 @@
   - This Layout file contains three parts inside vertical LinearLayout wrapped by a ScrollView   -                                     -
   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true"
     android:scrollbars="none"
     tools:background="@drawable/shape_main_evening_background"
@@ -50,9 +50,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/small_space"
-            android:background="@drawable/shape_transparent_rounded_background"
             android:padding="@dimen/small_space"
             tools:itemCount="8"
+            android:background="@drawable/shape_transparent_rounded_background"
             tools:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/item_hour_forecast"
             tools:orientation="horizontal"
