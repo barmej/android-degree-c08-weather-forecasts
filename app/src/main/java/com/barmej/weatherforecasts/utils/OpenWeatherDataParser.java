@@ -85,6 +85,7 @@ public class OpenWeatherDataParser {
     private static final String OWM_SUNSET = "sunset";
 
 
+
     /**
      * Check if there is an error in the response json
      *
