@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+<?xml version="1.0" encoding="utf-8"?>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - This layouts used as an item layout for the horizontal RecyclerView of 24 hours forecasts    -
   - It display 3 hour forecast info that include weather icon high temperature and time          -
   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
