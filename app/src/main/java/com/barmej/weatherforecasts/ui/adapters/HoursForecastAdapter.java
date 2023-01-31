@@ -54,8 +54,7 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
      * @return A new ForecastAdapterViewHolder that holds the list item view
      */
     @Override
-    public @NonNull
-    ForecastAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+    public @NonNull ForecastAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_hour_forecast, viewGroup, false);
         return new ForecastAdapterViewHolder(view);
     }
@@ -83,6 +82,15 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
         // Display weather condition icon
         forecastAdapterViewHolder.iconImageView.setImageResource(weatherImageId);
 
+        // Get weather condition description
+        String description = forecast.getWeather().get(0).getDescription();
+
+        // Create the accessibility String from the weather description
+        String descriptionAccessibility = mContext.getString(R.string.access_forecast, description);
+
+        // Set content description (for accessibility purposes)
+        forecastAdapterViewHolder.iconImageView.setContentDescription(descriptionAccessibility);
+
         /* Weather Clock Time ******************************************************************* */
 
         // Get human readable string using getHourOfDay utility method and display it
@@ -102,6 +110,12 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
         // Display high temperature
         forecastAdapterViewHolder.temperatureTextView.setText(highTemperatureString);
 
+        // Create the accessibility String from the weather description
+        String highTemperatureAccessibility = mContext.getString(R.string.access_high_temp, highTemperatureString);
+
+        // Set content description (for accessibility purposes)
+        forecastAdapterViewHolder.temperatureTextView.setContentDescription(highTemperatureAccessibility);
+
     }
 
     /**
@@ -116,16 +130,6 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
         } else {
             return mForecasts.size();
         }
-    }
-
-    /**
-     * Update the current forecasts data with new list
-     *
-     * @param forecasts a list of {@link Forecast}
-     */
-    public void updateData(List<Forecast> forecasts) {
-        this.mForecasts = forecasts;
-        notifyDataSetChanged();
     }
 
     /**
@@ -145,6 +149,16 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
             temperatureTextView = view.findViewById(R.id.temperature);
         }
 
+    }
+
+    /**
+     * Update the current forecasts data with new list
+     *
+     * @param forecasts a list of {@link Forecast}
+     */
+    public void updateData(List<Forecast> forecasts) {
+        this.mForecasts = forecasts;
+        notifyDataSetChanged();
     }
 
 }

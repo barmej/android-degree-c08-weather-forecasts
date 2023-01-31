@@ -17,10 +17,10 @@
     <!-- - - - - - - - - - - - - - - - -
       - Preference Labels              -
       - - - - - - - - - - - - - - - - - -->
-    <string name="pref_location_label">الموقع</string>
-    <string name="pref_units_label">وحدة قياس الحرارة</string>
-    <string name="pref_units_label_metric">النظام المتري</string>
-    <string name="pref_units_label_imperial">النظام الامبراطوري</string>
+    <string name="pref_location_label">Location</string>
+    <string name="pref_units_label">Measurement System</string>
+    <string name="pref_units_label_metric">Metric</string>
+    <string name="pref_units_label_imperial">Imperial</string>
 
     <!-- - - - - - - - - - - - - - - - -
       - Used by WeatherUtils           -
@@ -82,6 +82,16 @@
     <!-- For labelling tomorrow -->
     <string name="tomorrow">Tomorrow</string>
 
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - Used for Accessibility purposes                     -
+      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <string name="access_forecast">Forecast: <xliff:g id="condition">%1$s</xliff:g></string>
+    <string name="access_high_temp">High: <xliff:g id="high">%1$s</xliff:g></string>
+    <string name="access_low_temp">Low: <xliff:g id="low">%1$s</xliff:g></string>
+    <string name="access_high_low_temp">High: <xliff:g id="hight">%1$f</xliff:g> / Low: <xliff:g id="low">%2$f</xliff:g></string>
+    <string name="access_humidity">Humidity: <xliff:g id="humidity">%1$s</xliff:g></string>
+    <string name="access_pressure">Barometric Pressure: <xliff:g id="pressure">%1$s</xliff:g></string>
+    <string name="access_wind">Wind speed and direction: <xliff:g id="wind">%1$s</xliff:g></string>
 
     <!-- - - - - - - - - - - - - -
     - Untranslatable             -
